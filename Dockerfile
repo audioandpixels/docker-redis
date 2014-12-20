@@ -29,7 +29,7 @@ RUN  chmod -R 755 /data/scripts
 # Enable redis
 RUN  mkdir -m 755 -p /etc/service/redis
 COPY runit/redis /etc/service/redis/run
-RUN chmod 755 /etc/service/redis/run
+RUN  chmod 755 /etc/service/redis/run
 
 # Configure syslog-ng for redis
 RUN echo 'destination redis { file("/var/log/redis.log"); };' >> /etc/syslog-ng/syslog-ng.conf
