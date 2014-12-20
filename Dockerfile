@@ -31,6 +31,11 @@ RUN  mkdir -m 755 -p /etc/service/redis
 COPY runit/redis /etc/service/redis/run
 RUN chmod 755 /etc/service/redis/run
 
+# Configure syslog-ng for redis
+RUN echo 'destination redis { file("/var/log/redis.log"); };' >> /etc/syslog-ng/syslog-ng.conf
+RUN echo 'filter f_redis { facility(local0); };' >> /etc/syslog-ng/syslog-ng.conf
+RUN echo 'log { source(s_src); filter(f_redis); destination(redis); };' >> /etc/syslog-ng/syslog-ng.conf
+
 # Start with cron and services
 CMD ["/sbin/my_init"]
 
