@@ -20,7 +20,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y redis-server
 RUN DEBIAN_FRONTEND=noninteractive apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Configure redis
-# COPY ./redis.conf /etc/redis/redis.conf
+COPY ./redis.conf /etc/redis/redis.conf
 
 # Use wrapper scripts to start redis and cron
 COPY scripts /data/scripts
