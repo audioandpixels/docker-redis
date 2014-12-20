@@ -1,6 +1,10 @@
 phusion-redis
 =============
 
+```
+docker build -t audioandpixels/redis github.com/audioandpixels/docker-redis
+```
+
 A simple image with redis based on [phusion's baseimage](https://github.com/phusion/baseimage-docker).
 
 ### Extras
