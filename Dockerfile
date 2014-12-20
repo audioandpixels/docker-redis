@@ -1,30 +1,41 @@
-# Phusion Redis
-FROM phusion/baseimage:0.9.10
+FROM phusion/baseimage:0.9.15
+MAINTAINER Jason Cox <jason@audioandpixels.com>
 
-MAINTAINER Justin Cunningham <justin@bulletprooftiger.com>
+# Disable SSH and existing cron jobs
+RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh /etc/cron.daily/dpkg /etc/cron.daily/apt \
+           /etc/cron.daily/passwd /etc/cron.daily/upstart /etc/cron.weekly/fstrim
 
-RUN apt-get update
-RUN apt-get upgrade -y
+# Ensure UTF-8 locale
+COPY locale /etc/default/locale
+RUN  DEBIAN_FRONTEND=noninteractive locale-gen en_US.UTF-8
+RUN  DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
 
-# Install automatic security updates
-RUN sudo apt-get install -y unattended-upgrades
-ADD config/20auto-upgrades /etc/apt/apt.conf.d/20auto-upgrades
+# Update APT
+RUN DEBIAN_FRONTEND=noninteractive apt-get update
 
 # Install redis
-RUN apt-get install -y redis-server
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y redis-server
 
-# Enable redis
-RUN mkdir /etc/service/redis
-ADD config/redis /etc/service/redis/run
-RUN chmod +x /etc/service/redis/run
+# Clean up APT and temporary files
+RUN DEBIAN_FRONTEND=noninteractive apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Configure redis
-RUN sed -i 's/daemonize yes/daemonize no/g' /etc/redis/redis.conf
-RUN sed -i 's/bind 127.0.0.1/# bind 127.0.0.1/g' /etc/redis/redis.conf
+COPY ./redis.conf /etc/redis/redis.conf
 
-# Setup a volume that will contain the db
-VOLUME /var/lib/redis
+# Use wrapper scripts to start redis and cron
+COPY scripts /data/scripts
+RUN  chmod -R 755 /data/scripts
+
+# Enable redis
+RUN  mkdir -m 755 -p /etc/service/redis
+COPY runit/redis /etc/service/redis/run
+RUN chmod 755 /etc/service/redis/run
+
+# Start with cron and services
+CMD ["/sbin/my_init"]
+
+# Keep Redis log and storage outside of union filesystem
+VOLUME ["/var/log/", "/var/lib/redis"]
 
 # Expose the port and run it
 EXPOSE 6379
-CMD ["/sbin/my_init"]
