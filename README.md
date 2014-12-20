@@ -24,13 +24,6 @@ $HOME/redis/log
 
 ## Basic usage
 
-####Create external volumes
-```shell
-$ mkdir $HOME/redis && chown root:root $HOME/redis && chmod 0700 $HOME/redis
-$ mkdir $HOME/redis/data && chown root:root $HOME/redis/data && chmod 0700 $HOME/redis/data
-$ mkdir $HOME/redis/log && chown root:root $HOME/redis/log && chmod 0700 $HOME/redis/log
-```
-
 ####Start the container...
 
 ```shell
