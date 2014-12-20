@@ -36,6 +36,9 @@ RUN echo 'destination redis { file("/var/log/redis.log"); };' >> /etc/syslog-ng/
 RUN echo 'filter f_redis { facility(local0); };' >> /etc/syslog-ng/syslog-ng.conf
 RUN echo 'log { source(s_src); filter(f_redis); destination(redis); };' >> /etc/syslog-ng/syslog-ng.conf
 
+# Adjust overcommit memory for redis
+RUN sysctl vm.overcommit_memory=1
+
 # Start with cron and services
 CMD ["/sbin/my_init"]
 
