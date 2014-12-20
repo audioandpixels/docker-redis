@@ -4,7 +4,7 @@ Docker image for Redis 2.8
 
 ## Build the image
 ```shell
-docker build -t audioandpixels/redis github.com/audioandpixels/docker-redis
+$ docker build -t audioandpixels/redis github.com/audioandpixels/docker-redis
 ```
 
 ## Container requirements
